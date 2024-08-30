@@ -95,14 +95,12 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
 
         # from 'output_dir' make a dictionary of {sub_dir_name: [file1, file2,...]}
         for path, dirs, files in walk(output_dir):
-            if (
-                not dirs and scratch_dir not in path
-            ):  # Ignore files in 'output_dir' and scratch directory
+            if (not dirs and scratch_dir not in path
+                ):  # Ignore files in 'output_dir' and scratch directory
                 out_dir_walk_dict[basename(path)] = files
 
         sas_product_group = self.runconfig.sas_config["runconfig"]["groups"][
-            "product_group"
-        ]
+            "product_group"]
         output_format = sas_product_group["output_imagery_format"]
 
         if output_format == "NETCDF":
@@ -122,18 +120,22 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
             if len(file_names) == 0:
                 error_msg = f"Empty SAS output directory: {'/'.join((output_dir, dir_name_key))}"
 
-                self.logger.critical(self.name, ErrorCode.INVALID_OUTPUT, error_msg)
+                self.logger.critical(self.name, ErrorCode.INVALID_OUTPUT,
+                                     error_msg)
 
             for file_name in file_names:
-                if not getsize(os.path.join(output_dir, dir_name_key, file_name)):
+                if not getsize(
+                        os.path.join(output_dir, dir_name_key, file_name)):
                     error_msg = f"SAS output file {file_name} exists, but is empty"
 
-                    self.logger.critical(self.name, ErrorCode.INVALID_OUTPUT, error_msg)
+                    self.logger.critical(self.name, ErrorCode.INVALID_OUTPUT,
+                                         error_msg)
 
                 if file_name.split(".")[-1] not in expected_ext:
                     error_msg = f"SAS output file {file_name} extension error: expected one of {expected_ext}"
 
-                    self.logger.critical(self.name, ErrorCode.INVALID_OUTPUT, error_msg)
+                    self.logger.critical(self.name, ErrorCode.INVALID_OUTPUT,
+                                         error_msg)
 
     def _core_filename(self, inter_filename=None):
         """Returns the core file name component for products produced by the
@@ -164,8 +166,7 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
 
         # Assign the core file to the cached class attribute
         self._cached_core_filename = (
-            f"{self.PROJECT}_{self.LEVEL}_{self.NAME}-{self.SOURCE}"
-        )
+            f"{self.PROJECT}_{self.LEVEL}_{self.NAME}-{self.SOURCE}")
 
         return self._cached_core_filename
 
@@ -237,7 +238,8 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
 
             # Locate the HDF5 product which contains the RTC metadata
             for output_product in os.listdir(product_dir):
-                if output_product.endswith(".nc") or output_product.endswith(".h5"):
+                if output_product.endswith(".nc") or output_product.endswith(
+                        ".h5"):
                     metadata_product = output_product
                     break
             else:
@@ -245,11 +247,11 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
                     f"Could not find a NetCDF format RTC product to extract "
                     f"metadata from within {self.runconfig.output_product_path}"
                 )
-                self.logger.critical(self.name, ErrorCode.FILE_MOVE_FAILED, msg)
+                self.logger.critical(self.name, ErrorCode.FILE_MOVE_FAILED,
+                                     msg)
 
             product_metadata = self._collect_rtc_product_metadata(
-                os.path.join(product_dir, metadata_product)
-            )
+                os.path.join(product_dir, metadata_product))
 
             self._burst_metadata_cache[burst_id] = product_metadata
 
@@ -262,21 +264,18 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
             if acquisition_time is None:
                 raise ValueError(
                     "static_layer_product was requested, but no value was provided "
-                    "for DataValidityStartDate within the RunConfig"
-                )
+                    "for DataValidityStartDate within the RunConfig")
         else:
             # Use doppler start time as the acq time and convert it to our format
             # used for file naming
             acquisition_time = product_metadata["identification"][
-                "zeroDopplerStartTime"
-            ]
+                "zeroDopplerStartTime"]
 
             if acquisition_time.endswith("Z"):
                 acquisition_time = acquisition_time[:-1]
 
             acquisition_time = get_time_for_filename(
-                datetime.strptime(acquisition_time, "%Y-%m-%dT%H:%M:%S.%f")
-            )
+                datetime.strptime(acquisition_time, "%Y-%m-%dT%H:%M:%S.%f"))
 
             if not acquisition_time.endswith("Z"):
                 acquisition_time += "Z"
@@ -290,8 +289,7 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
 
         # Get the sensor (should be either S1A or S1B)
         sensor = get_sensor_from_spacecraft_name(
-            product_metadata["identification"]["platform"]
-        )
+            product_metadata["identification"]["platform"])
 
         # Spacing is assumed to be identical in both X and Y direction
         spacing = int(product_metadata["data"]["xCoordinateSpacing"])
@@ -303,8 +301,7 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
 
         rtc_file_components = (
             f"{burst_id}_{acquisition_time}{production_time}_{sensor}_"
-            f"{spacing}_{product_version}"
-        )
+            f"{spacing}_{product_version}")
 
         rtc_filename = f"{core_filename}_{rtc_file_components}"
 
@@ -342,8 +339,7 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
         # The name of the static layer should always follow the product version
         # within the intermediate filename
         sas_product_group = self.runconfig.sas_config["runconfig"]["groups"][
-            "product_group"
-        ]
+            "product_group"]
         product_version = str(sas_product_group["product_version"])
 
         if not product_version.startswith("v"):
@@ -351,7 +347,8 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
 
         static_layer_name = filename.split(product_version)[-1]
 
-        rtc_filename = self._rtc_filename(inter_filename, static_layer_product=True)
+        rtc_filename = self._rtc_filename(inter_filename,
+                                          static_layer_product=True)
 
         static_layer_filename = f"{rtc_filename}{static_layer_name}.tif"
 
@@ -447,7 +444,8 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
 
 
         """
-        rtc_filename = self._rtc_filename(inter_filename, static_layer_product=True)
+        rtc_filename = self._rtc_filename(inter_filename,
+                                          static_layer_product=True)
 
         browse_filename = f"{rtc_filename}_BROWSE.png"
 
@@ -497,7 +495,8 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
         """
         ext = os.path.splitext(inter_filename)[-1]
 
-        rtc_filename = self._rtc_filename(inter_filename, static_layer_product=True)
+        rtc_filename = self._rtc_filename(inter_filename,
+                                          static_layer_product=True)
 
         return f"{rtc_filename}{ext}"
 
@@ -524,8 +523,7 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
 
         # Get the sensor (should be either S1A or S1B)
         sensor = get_sensor_from_spacecraft_name(
-            product_metadata["identification"]["platform"]
-        )
+            product_metadata["identification"]["platform"])
 
         # Spacing is assumed to be identical in both X and Y direction
         spacing = int(product_metadata["data"]["xCoordinateSpacing"])
@@ -538,8 +536,7 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
 
         ancillary_filename = (
             f"{self.PROJECT}_{self.LEVEL}_{self.NAME}-{self.SOURCE}_"
-            f"{production_time}Z_{sensor}_{spacing}_{product_version}"
-        )
+            f"{production_time}Z_{sensor}_{spacing}_{product_version}")
 
         return ancillary_filename
 
@@ -622,23 +619,21 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
 
         # Fill in some additional fields expected within the ISO
         output_product_metadata["data"]["width"] = len(
-            output_product_metadata["data"]["xCoordinates"]
-        )
+            output_product_metadata["data"]["xCoordinates"])
         output_product_metadata["data"]["length"] = len(
-            output_product_metadata["data"]["yCoordinates"]
-        )
+            output_product_metadata["data"]["yCoordinates"])
 
         product_type = self.runconfig.product_type
 
         # If creating ISO metadata for a static layer product, we need to
         # formulate the bounding box, rather than the bounding polygon
         if product_type == "RTC_S1_STATIC":
-            bounding_box = output_product_metadata["identification"]["boundingBox"]
+            bounding_box = output_product_metadata["identification"][
+                "boundingBox"]
             epsg_code = int(output_product_metadata["data"]["projection"])
 
             lat_min, lat_max, lon_min, lon_max = translate_utm_bbox_to_lat_lon(
-                bounding_box, epsg_code
-            )
+                bounding_box, epsg_code)
 
             output_product_metadata["staticBoundingBox"] = {
                 "lonMin": lon_min,
@@ -649,19 +644,18 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
         # Otherwise, convert the WKT format polygon to a gml:PosList
         else:
             # Parse the polygon coordinates to conform with gml
-            bounding_polygon_wtk_str = output_product_metadata["identification"][
-                "boundingPolygon"
-            ]
+            bounding_polygon_wtk_str = output_product_metadata[
+                "identification"]["boundingPolygon"]
 
             try:
                 bounding_polygon_gml_str = parse_bounding_polygon_from_wkt(
-                    bounding_polygon_wtk_str
-                )
-                output_product_metadata["boundingPolygon"] = bounding_polygon_gml_str
+                    bounding_polygon_wtk_str)
+                output_product_metadata[
+                    "boundingPolygon"] = bounding_polygon_gml_str
             except ValueError as err:
-                self.logger.critical(
-                    self.name, ErrorCode.ISO_METADATA_RENDER_FAILED, str(err)
-                )
+                self.logger.critical(self.name,
+                                     ErrorCode.ISO_METADATA_RENDER_FAILED,
+                                     str(err))
 
         return output_product_metadata
 
@@ -676,10 +670,14 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
 
         """
         custom_metadata = {
-            "ISO_OPERA_FilePackageName": self._ancillary_filename(),
-            "ISO_OPERA_ProducerGranuleId": self._ancillary_filename(),
-            "MetadataProviderAction": "creation",
-            "GranuleFilename": self._ancillary_filename(),
+            "ISO_OPERA_FilePackageName":
+            self._ancillary_filename(),
+            "ISO_OPERA_ProducerGranuleId":
+            self._ancillary_filename(),
+            "MetadataProviderAction":
+            "creation",
+            "GranuleFilename":
+            self._ancillary_filename(),
             "ISO_OPERA_ProjectKeywords": [
                 "OPERA",
                 "JPL",
@@ -730,11 +728,12 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
             msg = (
                 f"Could not load ISO template {iso_template_path}, file does not exist"
             )
-            self.logger.critical(
-                self.name, ErrorCode.ISO_METADATA_TEMPLATE_NOT_FOUND, msg
-            )
+            self.logger.critical(self.name,
+                                 ErrorCode.ISO_METADATA_TEMPLATE_NOT_FOUND,
+                                 msg)
 
-        rendered_template = render_jinja2(iso_template_path, iso_metadata, self.logger)
+        rendered_template = render_jinja2(iso_template_path, iso_metadata,
+                                          self.logger)
 
         return rendered_template
 
@@ -757,17 +756,21 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
         # For each output file name, assign the final file name matching the
         # expected conventions
         for output_product in output_products:
-            self._assign_filename(output_product, self.runconfig.output_product_path)
+            self._assign_filename(output_product,
+                                  self.runconfig.output_product_path)
 
         # Write the catalog metadata to disk with the appropriate filename
         catalog_metadata = self._create_catalog_metadata()
 
-        if not catalog_metadata.validate(catalog_metadata.get_schema_file_path()):
+        if not catalog_metadata.validate(
+                catalog_metadata.get_schema_file_path()):
             msg = f"Failed to create valid catalog metadata, reason(s):\n {catalog_metadata.get_error_msg()}"
-            self.logger.critical(self.name, ErrorCode.INVALID_CATALOG_METADATA, msg)
+            self.logger.critical(self.name, ErrorCode.INVALID_CATALOG_METADATA,
+                                 msg)
 
         cat_meta_filename = self._catalog_metadata_filename()
-        cat_meta_filepath = join(self.runconfig.output_product_path, cat_meta_filename)
+        cat_meta_filepath = join(self.runconfig.output_product_path,
+                                 cat_meta_filename)
 
         self.logger.info(
             self.name,
@@ -779,9 +782,9 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
             catalog_metadata.write(cat_meta_filepath)
         except OSError as err:
             msg = f"Failed to write catalog metadata file {cat_meta_filepath}, reason: {str(err)}"
-            self.logger.critical(
-                self.name, ErrorCode.CATALOG_METADATA_CREATION_FAILED, msg
-            )
+            self.logger.critical(self.name,
+                                 ErrorCode.CATALOG_METADATA_CREATION_FAILED,
+                                 msg)
 
         # Generate the ISO metadata for use with product submission to DAAC(s)
         # For RTC-S1, each burst-based product gets its own ISO xml
@@ -789,9 +792,8 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
             iso_metadata = self._create_iso_metadata(burst_metadata)
 
             iso_meta_filename = self._iso_metadata_filename(burst_id)
-            iso_meta_filepath = join(
-                self.runconfig.output_product_path, iso_meta_filename
-            )
+            iso_meta_filepath = join(self.runconfig.output_product_path,
+                                     iso_meta_filename)
 
             if iso_metadata:
                 self.logger.info(
@@ -806,14 +808,16 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
         # if necessary
         if self.runconfig.qa_enabled:
             qa_log_filename = self._qa_log_filename()
-            qa_log_filepath = join(self.runconfig.output_product_path, qa_log_filename)
+            qa_log_filepath = join(self.runconfig.output_product_path,
+                                   qa_log_filename)
             self.qa_logger.move(qa_log_filepath)
 
             try:
                 self._finalize_log(self.qa_logger)
             except OSError as err:
                 msg = f"Failed to write QA log file to {qa_log_filepath}, reason: {str(err)}"
-                self.logger.critical(self.name, ErrorCode.LOG_FILE_CREATION_FAILED, msg)
+                self.logger.critical(self.name,
+                                     ErrorCode.LOG_FILE_CREATION_FAILED, msg)
 
         # Lastly, write the combined PGE/SAS log to disk with the appropriate filename
         log_filename = self._log_filename()
@@ -847,7 +851,8 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
         self._stage_output_files()
 
 
-class RtcS1Executor(RtcS1PreProcessorMixin, RtcS1PostProcessorMixin, PgeExecutor):
+class RtcS1Executor(RtcS1PreProcessorMixin, RtcS1PostProcessorMixin,
+                    PgeExecutor):
     """Main class for execution of the RTC-S1 PGE, including the SAS layer.
 
     This class essentially rolls up the RTC-specific pre- and post-processor
@@ -887,7 +892,8 @@ class RtcS1Executor(RtcS1PreProcessorMixin, RtcS1PostProcessorMixin, PgeExecutor
             "*-STATIC_*_mask.tif": self._static_layer_filename,
             "*-STATIC_*_rtc_anf*.tif": self._static_layer_filename,
             "*-STATIC_*_number_of_looks.tif": self._static_layer_filename,
-            "*-STATIC_*_local_incidence_angle.tif": self._static_layer_filename,
+            "*-STATIC_*_local_incidence_angle.tif":
+            self._static_layer_filename,
             "*-STATIC_*_incidence_angle.tif": self._static_layer_filename,
             "*-STATIC_*.png": self._static_browse_filename,
             "*-STATIC_*.h5": self._static_metadata_filename,

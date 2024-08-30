@@ -88,9 +88,8 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
 
         # from 'output_dir' make a dictionary of {sub_dir_name: [file1, file2,...]}
         for path, dirs, files in walk(output_dir):
-            if (
-                not dirs and scratch_dir not in path
-            ):  # Ignore files in 'output_dir' and scratch directory
+            if (not dirs and scratch_dir not in path
+                ):  # Ignore files in 'output_dir' and scratch directory
                 dir_key = path.replace(output_dir, "")
                 if dir_key.startswith("/"):
                     dir_key = dir_key[1:]
@@ -99,7 +98,8 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
         if not out_dir_walk_dict:
             error_msg = f"No SAS output file(s) found within {output_dir}"
 
-            self.logger.critical(self.name, ErrorCode.OUTPUT_NOT_FOUND, error_msg)
+            self.logger.critical(self.name, ErrorCode.OUTPUT_NOT_FOUND,
+                                 error_msg)
 
         expected_ext = ["tiff", "tif", "h5", "png"]
 
@@ -108,18 +108,22 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
             if len(file_names) == 0:
                 error_msg = f"Empty SAS output directory: {'/'.join((output_dir, dir_name_key))}"
 
-                self.logger.critical(self.name, ErrorCode.INVALID_OUTPUT, error_msg)
+                self.logger.critical(self.name, ErrorCode.INVALID_OUTPUT,
+                                     error_msg)
 
             for file_name in file_names:
-                if not getsize(os.path.join(output_dir, dir_name_key, file_name)):
+                if not getsize(
+                        os.path.join(output_dir, dir_name_key, file_name)):
                     error_msg = f"SAS output file {file_name} exists, but is empty"
 
-                    self.logger.critical(self.name, ErrorCode.INVALID_OUTPUT, error_msg)
+                    self.logger.critical(self.name, ErrorCode.INVALID_OUTPUT,
+                                         error_msg)
 
                 if file_name.split(".")[-1] not in expected_ext:
                     error_msg = f"SAS output file {file_name} extension error: expected one of {expected_ext}"
 
-                    self.logger.critical(self.name, ErrorCode.INVALID_OUTPUT, error_msg)
+                    self.logger.critical(self.name, ErrorCode.INVALID_OUTPUT,
+                                         error_msg)
 
     def _core_filename(self, inter_filename=None):
         """Returns the core file name component for products produced by the
@@ -226,9 +230,8 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
             cslc_metadata = self._burst_metadata_cache[burst_id]
         else:
             # Collect the metadata from the HDF5 output product
-            cslc_h5_product_pattern = join(
-                os.path.dirname(inter_filename), f"*{burst_id_dir}*.h5"
-            )
+            cslc_h5_product_pattern = join(os.path.dirname(inter_filename),
+                                           f"*{burst_id_dir}*.h5")
 
             # Find the main .h5 product path based on location of the current file
             # and burst ID
@@ -240,12 +243,12 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
                 )
 
             cslc_metadata = self._collect_cslc_product_metadata(
-                cslc_h5_product_paths[0]
-            )
+                cslc_h5_product_paths[0])
 
             self._burst_metadata_cache[burst_id] = cslc_metadata
 
-        burst_metadata = cslc_metadata["processing_information"]["input_burst_metadata"]
+        burst_metadata = cslc_metadata["processing_information"][
+            "input_burst_metadata"]
 
         # If generating a filename for a static layer product, we use the
         # data validity start time configured in the RunConfig in lieu of
@@ -256,8 +259,7 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
             if acquisition_time is None:
                 raise ValueError(
                     "static_layer_product was requested, but no value was provided "
-                    "for DataValidityStartDate within the RunConfig"
-                )
+                    "for DataValidityStartDate within the RunConfig")
         else:
             acquisition_time = burst_metadata["sensing_start"]
 
@@ -265,8 +267,7 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
                 acquisition_time = acquisition_time[:-1]
 
             acquisition_time = get_time_for_filename(
-                datetime.strptime(acquisition_time, "%Y-%m-%d %H:%M:%S.%f")
-            )
+                datetime.strptime(acquisition_time, "%Y-%m-%d %H:%M:%S.%f"))
 
             if not acquisition_time.endswith("Z"):
                 acquisition_time += "Z"
@@ -290,8 +291,7 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
 
         cslc_filename = (
             f"{core_filename}_{burst_id}_{acquisition_time}{production_time}_"
-            f"{sensor}{pol}_{product_version}"
-        )
+            f"{sensor}{pol}_{product_version}")
 
         # Cache the file name for this burst ID, so it can be used with the
         # ISO metadata later.
@@ -337,7 +337,8 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
 
 
         """
-        cslc_filename = self._cslc_filename(inter_filename, static_layer_product=True)
+        cslc_filename = self._cslc_filename(inter_filename,
+                                            static_layer_product=True)
 
         static_layers_filename = f"{cslc_filename}.h5"
 
@@ -430,7 +431,8 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
         # a representative
         cslc_metadata = list(self._burst_metadata_cache.values())[0]
 
-        burst_metadata = cslc_metadata["processing_information"]["input_burst_metadata"]
+        burst_metadata = cslc_metadata["processing_information"][
+            "input_burst_metadata"]
 
         sensor = burst_metadata["platform_id"]
         pol = burst_metadata["polarization"]
@@ -444,8 +446,7 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
 
         ancillary_filename = (
             f"{self.PROJECT}_{self.LEVEL}_{self.NAME}_{production_time}Z_"
-            f"{sensor}_{pol}_{product_version}"
-        )
+            f"{sensor}_{pol}_{product_version}")
 
         return ancillary_filename
 
@@ -526,15 +527,14 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
 
 
         """
-        output_product_metadata = get_cslc_s1_product_metadata(metadata_product)
+        output_product_metadata = get_cslc_s1_product_metadata(
+            metadata_product)
 
         # Fill in some additional fields expected within the ISO
         output_product_metadata["data"]["width"] = len(
-            output_product_metadata["data"]["x_coordinates"]
-        )
+            output_product_metadata["data"]["x_coordinates"])
         output_product_metadata["data"]["length"] = len(
-            output_product_metadata["data"]["y_coordinates"]
-        )
+            output_product_metadata["data"]["y_coordinates"])
 
         # Remove larger datasets to save memory when caching metadata for each burst
         for key in ["x_coordinates", "y_coordinates"]:
@@ -546,46 +546,42 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
         # Parse the burst center coordinate to conform with gml schema
         # sample: {ndarray: (2,)} [-118.30363047, 33.8399832]
         burst_center = output_product_metadata["processing_information"][
-            "input_burst_metadata"
-        ]["center"]
+            "input_burst_metadata"]["center"]
         burst_center_str = f"{burst_center[0]} {burst_center[1]}"
         output_product_metadata["burst_center"] = burst_center_str
 
         # Parse the burst polygon coordinates to conform with gml
         burst_polygon_wtk_str = output_product_metadata["identification"][
-            "bounding_polygon"
-        ]
+            "bounding_polygon"]
 
         try:
             burst_polygon_gml_str = parse_bounding_polygon_from_wkt(
-                burst_polygon_wtk_str
-            )
+                burst_polygon_wtk_str)
             output_product_metadata["burst_polygon"] = burst_polygon_gml_str
         except ValueError as err:
-            self.logger.critical(
-                self.name, ErrorCode.ISO_METADATA_RENDER_FAILED, str(err)
-            )
+            self.logger.critical(self.name,
+                                 ErrorCode.ISO_METADATA_RENDER_FAILED,
+                                 str(err))
 
         # Jinja2 cannot serialize int64 data types to JSON, so convert the shape array
         # to a list of native Python ints
         shape = output_product_metadata["processing_information"][
-            "input_burst_metadata"
-        ]["shape"]
+            "input_burst_metadata"]["shape"]
         shape = list(map(int, shape))
-        output_product_metadata["processing_information"]["input_burst_metadata"][
-            "shape"
-        ] = shape
+        output_product_metadata["processing_information"][
+            "input_burst_metadata"]["shape"] = shape
 
         # Some metadata fields which can be a list of files can also be specified
         # as a string if there is only a single file. Wrap these fields in a list
         # in order to maintain a consistent approach to serializing them in the
         # template.
-        for key in ("calibration_files", "l1_slc_files", "noise_files", "orbit_files"):
-            inputs = output_product_metadata["processing_information"]["inputs"][key]
+        for key in ("calibration_files", "l1_slc_files", "noise_files",
+                    "orbit_files"):
+            inputs = output_product_metadata["processing_information"][
+                "inputs"][key]
             if isinstance(inputs, str):
-                output_product_metadata["processing_information"]["inputs"][key] = [
-                    inputs
-                ]
+                output_product_metadata["processing_information"]["inputs"][
+                    key] = [inputs]
 
         return output_product_metadata
 
@@ -600,10 +596,14 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
 
         """
         custom_metadata = {
-            "ISO_OPERA_FilePackageName": self._core_filename(),
-            "ISO_OPERA_ProducerGranuleId": self._core_filename(),
-            "MetadataProviderAction": "creation",
-            "GranuleFilename": self._core_filename(),
+            "ISO_OPERA_FilePackageName":
+            self._core_filename(),
+            "ISO_OPERA_ProducerGranuleId":
+            self._core_filename(),
+            "MetadataProviderAction":
+            "creation",
+            "GranuleFilename":
+            self._core_filename(),
             "ISO_OPERA_ProjectKeywords": [
                 "OPERA",
                 "JPL",
@@ -655,11 +655,12 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
             msg = (
                 f"Could not load ISO template {iso_template_path}, file does not exist"
             )
-            self.logger.critical(
-                self.name, ErrorCode.ISO_METADATA_TEMPLATE_NOT_FOUND, msg
-            )
+            self.logger.critical(self.name,
+                                 ErrorCode.ISO_METADATA_TEMPLATE_NOT_FOUND,
+                                 msg)
 
-        rendered_template = render_jinja2(iso_template_path, iso_metadata, self.logger)
+        rendered_template = render_jinja2(iso_template_path, iso_metadata,
+                                          self.logger)
 
         return rendered_template
 
@@ -682,17 +683,21 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
         # For each output file name, assign the final file name matching the
         # expected conventions
         for output_product in output_products:
-            self._assign_filename(output_product, self.runconfig.output_product_path)
+            self._assign_filename(output_product,
+                                  self.runconfig.output_product_path)
 
         # Write the catalog metadata to disk with the appropriate filename
         catalog_metadata = self._create_catalog_metadata()
 
-        if not catalog_metadata.validate(catalog_metadata.get_schema_file_path()):
+        if not catalog_metadata.validate(
+                catalog_metadata.get_schema_file_path()):
             msg = f"Failed to create valid catalog metadata, reason(s):\n {catalog_metadata.get_error_msg()}"
-            self.logger.critical(self.name, ErrorCode.INVALID_CATALOG_METADATA, msg)
+            self.logger.critical(self.name, ErrorCode.INVALID_CATALOG_METADATA,
+                                 msg)
 
         cat_meta_filename = self._catalog_metadata_filename()
-        cat_meta_filepath = join(self.runconfig.output_product_path, cat_meta_filename)
+        cat_meta_filepath = join(self.runconfig.output_product_path,
+                                 cat_meta_filename)
 
         self.logger.info(
             self.name,
@@ -704,9 +709,9 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
             catalog_metadata.write(cat_meta_filepath)
         except OSError as err:
             msg = f"Failed to write catalog metadata file {cat_meta_filepath}, reason: {str(err)}"
-            self.logger.critical(
-                self.name, ErrorCode.CATALOG_METADATA_CREATION_FAILED, msg
-            )
+            self.logger.critical(self.name,
+                                 ErrorCode.CATALOG_METADATA_CREATION_FAILED,
+                                 msg)
 
         # Generate the ISO metadata for use with product submission to DAAC(s)
         # For CSLC-S1, each burst-based product gets its own ISO xml
@@ -714,9 +719,8 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
             iso_metadata = self._create_iso_metadata(burst_metadata)
 
             iso_meta_filename = self._iso_metadata_filename(burst_id)
-            iso_meta_filepath = join(
-                self.runconfig.output_product_path, iso_meta_filename
-            )
+            iso_meta_filepath = join(self.runconfig.output_product_path,
+                                     iso_meta_filename)
 
             if iso_metadata:
                 self.logger.info(
@@ -731,14 +735,16 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
         # if necessary
         if self.runconfig.qa_enabled:
             qa_log_filename = self._qa_log_filename()
-            qa_log_filepath = join(self.runconfig.output_product_path, qa_log_filename)
+            qa_log_filepath = join(self.runconfig.output_product_path,
+                                   qa_log_filename)
             self.qa_logger.move(qa_log_filepath)
 
             try:
                 self._finalize_log(self.qa_logger)
             except OSError as err:
                 msg = f"Failed to write QA log file to {qa_log_filepath}, reason: {str(err)}"
-                self.logger.critical(self.name, ErrorCode.LOG_FILE_CREATION_FAILED, msg)
+                self.logger.critical(self.name,
+                                     ErrorCode.LOG_FILE_CREATION_FAILED, msg)
 
         # Lastly, write the combined PGE/SAS log to disk with the appropriate filename
         log_filename = self._log_filename()
@@ -772,7 +778,8 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
         self._stage_output_files()
 
 
-class CslcS1Executor(CslcS1PreProcessorMixin, CslcS1PostProcessorMixin, PgeExecutor):
+class CslcS1Executor(CslcS1PreProcessorMixin, CslcS1PostProcessorMixin,
+                     PgeExecutor):
     """Main class for execution of the CSLC-S1 PGE, including the SAS layer.
 
     This class essentially rolls up the CSLC-specific pre- and post-processor
