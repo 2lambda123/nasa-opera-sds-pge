@@ -3,187 +3,187 @@
 # OPERA PCM.
 
 RunConfig:
-    # Name for the RunConfig, may be any string
-    Name: OPERA-CSLC-S1-PGE-SAMPLE-CONFIG
+  # Name for the RunConfig, may be any string
+  Name: OPERA-CSLC-S1-PGE-SAMPLE-CONFIG
 
-    Groups:
-        # PGE-specific RunConfig section
-        # This section is only used by the PGE, however, paths to inputs/outputs
-        # should align with the similar sections of the SAS RunConfig
-        PGE:
-            PGENameGroup:
-                # Name of the PGE for use with this RunConfig, should always be
-                # CSLC_S1_PGE when using with the CSLC-S1 PGE
-                PGEName: CSLC_S1_PGE
+  Groups:
+    # PGE-specific RunConfig section
+    # This section is only used by the PGE, however, paths to inputs/outputs
+    # should align with the similar sections of the SAS RunConfig
+    PGE:
+      PGENameGroup:
+        # Name of the PGE for use with this RunConfig, should always be
+        # CSLC_S1_PGE when using with the CSLC-S1 PGE
+        PGEName: CSLC_S1_PGE
 
-            InputFilesGroup:
-                # List of input files
-                # Must be a list containing the path to the input SAFE zip file(s),
-                # as well as the path to the Orbit Ephemerides file(s)
-                # Paths must correspond to the file system within the Docker container
-                InputFilePaths:
-                    - /home/compass_user/input_dir/S1A_IW_SLC__1SDV_20220501T015035_20220501T015102_043011_0522A4_42CC.zip
-                    - /home/compass_user/input_dir/S1A_OPER_AUX_POEORB_OPOD_20220521T081912_V20220430T225942_20220502T005942.EOF
+      InputFilesGroup:
+        # List of input files
+        # Must be a list containing the path to the input SAFE zip file(s),
+        # as well as the path to the Orbit Ephemerides file(s)
+        # Paths must correspond to the file system within the Docker container
+        InputFilePaths:
+          - /home/compass_user/input_dir/S1A_IW_SLC__1SDV_20220501T015035_20220501T015102_043011_0522A4_42CC.zip
+          - /home/compass_user/input_dir/S1A_OPER_AUX_POEORB_OPOD_20220521T081912_V20220430T225942_20220502T005942.EOF
 
-            DynamicAncillaryFilesGroup:
-                # Map of ancillary file types to paths to the file
-                # Paths must correspond to the file system within the Docker container
-                AncillaryFileMap:
-                    # Path to the Digital Elevation Model
-                    # Must be either a single .tif, or a .vrt that points to one
-                    # or more .tif files
-                    dem_file: /home/compass_user/input_dir/dem_4326.tiff
+      DynamicAncillaryFilesGroup:
+        # Map of ancillary file types to paths to the file
+        # Paths must correspond to the file system within the Docker container
+        AncillaryFileMap:
+          # Path to the Digital Elevation Model
+          # Must be either a single .tif, or a .vrt that points to one
+          # or more .tif files
+          dem_file: /home/compass_user/input_dir/dem_4326.tiff
 
-                    # TEC file in IONEX format for ionosphere correction
-                    tec_file: /home/compass_user/input_dir/jplg1210.22i
+          # TEC file in IONEX format for ionosphere correction
+          tec_file: /home/compass_user/input_dir/jplg1210.22i
 
-                    # Burst database, must be an .sqlite3 file
-                    burst_database_file: /home/compass_user/input_dir/burst_db_0.2.0_230831-bbox-only.sqlite
+          # Burst database, must be an .sqlite3 file
+          burst_database_file: /home/compass_user/input_dir/burst_db_0.2.0_230831-bbox-only.sqlite
 
-            ProductPathGroup:
-                # Path to where output products should be stored
-                # Must correspond to the file system within the Docker container,
-                # and must have write permissions for the User/Group used with
-                # the "Docker run" command
-                OutputProductPath: /home/compass_user/output_dir
+      ProductPathGroup:
+        # Path to where output products should be stored
+        # Must correspond to the file system within the Docker container,
+        # and must have write permissions for the User/Group used with
+        # the "Docker run" command
+        OutputProductPath: /home/compass_user/output_dir
 
-                # Path to a scratch directory for the PGE and SAS to store
-                # intermediate files that will not be needed after PGE execution
-                # completes
-                # Must correspond to the file system within the Docker container,
-                # and must have write permissions for the User/Group used with
-                # the "Docker run" command
-                ScratchPath: /home/compass_user/scratch_dir
+        # Path to a scratch directory for the PGE and SAS to store
+        # intermediate files that will not be needed after PGE execution
+        # completes
+        # Must correspond to the file system within the Docker container,
+        # and must have write permissions for the User/Group used with
+        # the "Docker run" command
+        ScratchPath: /home/compass_user/scratch_dir
 
-            PrimaryExecutable:
-                # Identifier for the PGE executable, should always be CSLC_S1 for
-                # this PGE
-                ProductIdentifier: CSLC_S1
+      PrimaryExecutable:
+        # Identifier for the PGE executable, should always be CSLC_S1 for
+        # this PGE
+        ProductIdentifier: CSLC_S1
 
-                # Product version specific to output products
-                ProductVersion: "1.0"
+        # Product version specific to output products
+        ProductVersion: "1.0"
 
-                # Path to the executable to run, path must be reachable from
-                # within the Docker container (i.e. findable with a "which" command)
-                ProgramPath: conda
+        # Path to the executable to run, path must be reachable from
+        # within the Docker container (i.e. findable with a "which" command)
+        ProgramPath: conda
 
-                # List of command-line options to use with ProgramPath
-                ProgramOptions:
-                    - run
-                    - -n
-                    - COMPASS
-                    - s1_cslc.py
+        # List of command-line options to use with ProgramPath
+        ProgramOptions:
+          - run
+          - -n
+          - COMPASS
+          - s1_cslc.py
 
-                # The Error Code base value added to the offset values to make
-                # error codes unique per-PGE
-                ErrorCodeBase: 200000
+        # The Error Code base value added to the offset values to make
+        # error codes unique per-PGE
+        ErrorCodeBase: 200000
 
-                # Path to the Yamale schema used to validate the SAS portion
-                # of the RunConfig
-                # Path should correspond to the file system within the Docker
-                # container, and typically should reference a schema file bundled
-                # with the opera_pge installation directory within the container
-                # Consult the Docker image build scripts for more info
-                SchemaPath: /home/compass_user/opera/pge/cslc_s1/schema/cslc_s1_sas_schema.yaml
+        # Path to the Yamale schema used to validate the SAS portion
+        # of the RunConfig
+        # Path should correspond to the file system within the Docker
+        # container, and typically should reference a schema file bundled
+        # with the opera_pge installation directory within the container
+        # Consult the Docker image build scripts for more info
+        SchemaPath: /home/compass_user/opera/pge/cslc_s1/schema/cslc_s1_sas_schema.yaml
 
-                # Path to the Jinja2 template used to generate the ISO xml
-                # metadata file
-                # Path should correspond to the file system within the Docker
-                # container, and typically should reference a template file bundled
-                # with the opera_pge installation directory within the container
-                # Consult the Docker image build scripts for more info
-                IsoTemplatePath: /home/compass_user/opera/pge/cslc_s1/templates/OPERA_ISO_metadata_L2_CSLC_S1_template.xml.jinja2
+        # Path to the Jinja2 template used to generate the ISO xml
+        # metadata file
+        # Path should correspond to the file system within the Docker
+        # container, and typically should reference a template file bundled
+        # with the opera_pge installation directory within the container
+        # Consult the Docker image build scripts for more info
+        IsoTemplatePath: /home/compass_user/opera/pge/cslc_s1/templates/OPERA_ISO_metadata_L2_CSLC_S1_template.xml.jinja2
 
-                # Date field which designates the point after which the
-                # CSLC static layer product(s) should be considered valid.
-                # This field must be provided for CSLC-S1 jobs when static layer
-                # generation is enabled (see below), and must be of the form YYYYMMDD
-                DataValidityStartDate: 20140403
+        # Date field which designates the point after which the
+        # CSLC static layer product(s) should be considered valid.
+        # This field must be provided for CSLC-S1 jobs when static layer
+        # generation is enabled (see below), and must be of the form YYYYMMDD
+        DataValidityStartDate: 20140403
 
-            QAExecutable:
-                # Set to True to enable execution of an additional "Quality Assurance"
-                # application after SAS execution has completed
-                Enabled: False
+      QAExecutable:
+        # Set to True to enable execution of an additional "Quality Assurance"
+        # application after SAS execution has completed
+        Enabled: False
 
-                # Path to the executable to run, path must be reachable from
-                # within the Docker container (i.e. findable with a "which" command)
-                ProgramPath:
+        # Path to the executable to run, path must be reachable from
+        # within the Docker container (i.e. findable with a "which" command)
+        ProgramPath:
 
-                # List of command-line options to use with ProgramPath
-                ProgramOptions:
+        # List of command-line options to use with ProgramPath
+        ProgramOptions:
 
-            DebugLevelGroup:
-                # Set to True to enable Debug mode (TODO this is currently a no-op)
-                DebugSwitch: False
+      DebugLevelGroup:
+        # Set to True to enable Debug mode (TODO this is currently a no-op)
+        DebugSwitch: False
 
-                # Set to True to have the PGE invoke the SAS/QA executables via
-                # a shell, rather than a Python subprocess
-                # This allows shell-style syntax to be used in ProgramPath and
-                # ProgramOptions, which can be useful for testing
-                ExecuteViaShell: False
+        # Set to True to have the PGE invoke the SAS/QA executables via
+        # a shell, rather than a Python subprocess
+        # This allows shell-style syntax to be used in ProgramPath and
+        # ProgramOptions, which can be useful for testing
+        ExecuteViaShell: False
 
-        # SAS-specific RunConfig section
-        # Prior to SAS execution by the PGE, the section below starting at "runconfig"
-        # is isolated into its own YAML file for use with the SAS
-        SAS:
-            runconfig:
-                name: cslc_s1_workflow_default
+    # SAS-specific RunConfig section
+    # Prior to SAS execution by the PGE, the section below starting at "runconfig"
+    # is isolated into its own YAML file for use with the SAS
+    SAS:
+      runconfig:
+        name: cslc_s1_workflow_default
 
-                groups:
-                    pge_name_group:
-                        pge_name: CSLC_S1_PGE
+        groups:
+          pge_name_group:
+            pge_name: CSLC_S1_PGE
 
-                    input_file_group:
-                        # Required, list of SLC SAFE files (min=1)
-                        safe_file_path:
-                            - /home/compass_user/input_dir/S1A_IW_SLC__1SDV_20220501T015035_20220501T015102_043011_0522A4_42CC.zip
-                        # Required, list of Orbit Ephemerides (EOF) files (min=1)
-                        orbit_file_path:
-                            - /home/compass_user/input_dir/S1A_OPER_AUX_POEORB_OPOD_20220521T081912_V20220430T225942_20220502T005942.EOF
-                        # Burst IDs to process. Leave empty to process all bursts.
-                        burst_id:
+          input_file_group:
+            # Required, list of SLC SAFE files (min=1)
+            safe_file_path:
+              - /home/compass_user/input_dir/S1A_IW_SLC__1SDV_20220501T015035_20220501T015102_043011_0522A4_42CC.zip
+            # Required, list of Orbit Ephemerides (EOF) files (min=1)
+            orbit_file_path:
+              - /home/compass_user/input_dir/S1A_OPER_AUX_POEORB_OPOD_20220521T081912_V20220430T225942_20220502T005942.EOF
+            # Burst IDs to process. Leave empty to process all bursts.
+            burst_id:
 
-                    # This section should match the DynamicAncillaryFilesGroup of the PGE RunConfig
-                    dynamic_ancillary_file_group:
-                        dem_file: /home/compass_user/input_dir/dem_4326.tiff
-                        dem_description: "Digital Elevation Model (DEM) for the NASA OPERA project version 1.1 (v1.1) based on the Copernicus DEM 30-m and Copernicus 90-m referenced to the WGS84 ellipsoid"
+          # This section should match the DynamicAncillaryFilesGroup of the PGE RunConfig
+          dynamic_ancillary_file_group:
+            dem_file: /home/compass_user/input_dir/dem_4326.tiff
+            dem_description: "Digital Elevation Model (DEM) for the NASA OPERA project version 1.1 (v1.1) based on the Copernicus DEM 30-m and Copernicus 90-m referenced to the WGS84 ellipsoid"
 
-                        tec_file: /home/compass_user/input_dir/jplg1210.22i
+            tec_file: /home/compass_user/input_dir/jplg1210.22i
 
-                    static_ancillary_file_group:
-                        # burst database sqlite file
-                        burst_database_file: /home/compass_user/input_dir/burst_db_0.2.0_230831-bbox-only.sqlite
+          static_ancillary_file_group:
+            # burst database sqlite file
+            burst_database_file: /home/compass_user/input_dir/burst_db_0.2.0_230831-bbox-only.sqlite
 
-                    product_path_group:
-                        # This should match the path used for OutputProductPath
-                        product_path: /home/compass_user/output_dir
+          product_path_group:
+            # This should match the path used for OutputProductPath
+            product_path: /home/compass_user/output_dir
 
-                        # This should match the path used for ScratchPath
-                        scratch_path: /home/compass_user/scratch_dir
+            # This should match the path used for ScratchPath
+            scratch_path: /home/compass_user/scratch_dir
 
-                        # Intermediate file name, this field is currently unused
-                        sas_output_file: /home/compass_user/output_dir
+            # Intermediate file name, this field is currently unused
+            sas_output_file: /home/compass_user/output_dir
 
-                        # Product version specific to output products
-                        product_version: "1.0"
+            # Product version specific to output products
+            product_version: "1.0"
 
-                        # Product specification document version
-                        product_specification_version: "0.1.7"
+            # Product specification document version
+            product_specification_version: "0.1.7"
 
-                    primary_executable:
-                        # Must be one of CSLC_S1 or CSLC_S1_STATIC, this determines the type of
-                        # output product created
-                        product_type: CSLC_S1
+          primary_executable:
+            # Must be one of CSLC_S1 or CSLC_S1_STATIC, this determines the type of
+            # output product created
+            product_type: CSLC_S1
 
-                    # SLC processing options
-                    # Consult the CSLC-S1 SAS User's Guide for more info on each field
-                    processing:
-                        polarization: co-pol
-                        geocoding:
-                            flatten: True
-                            x_posting: 5
-                            y_posting: 10
-                        geo2rdr:
-                            lines_per_block: 1000
-                            threshold: 1.0e-8
-                            numiter: 25
+          # SLC processing options
+          # Consult the CSLC-S1 SAS User's Guide for more info on each field
+          processing:
+            polarization: co-pol
+            geocoding:
+              flatten: True
+              x_posting: 5
+              y_posting: 10
+            geo2rdr:
+              lines_per_block: 1000
+              threshold: 1.0e-8
+              numiter: 25
