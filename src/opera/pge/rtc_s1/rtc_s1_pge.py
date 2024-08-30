@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 """
 =============
 rtc_s1_pge.py
@@ -9,20 +8,21 @@ Module defining the implementation for the Radiometric Terrain Corrected (RTC)
 from Sentinel-1 A/B (S1) PGE.
 
 """
-
 import os.path
 from datetime import datetime
 from os import walk
-from os.path import basename, getsize, join
+from os.path import basename
+from os.path import getsize
+from os.path import join
 
 import h5py
 import numpy as np
-
-from opera.pge.base.base_pge import (PgeExecutor, PostProcessorMixin,
-                                     PreProcessorMixin)
-from opera.util.dataset_utils import (get_burst_id_from_file_name,
-                                      get_sensor_from_spacecraft_name,
-                                      parse_bounding_polygon_from_wkt)
+from opera.pge.base.base_pge import PgeExecutor
+from opera.pge.base.base_pge import PostProcessorMixin
+from opera.pge.base.base_pge import PreProcessorMixin
+from opera.util.dataset_utils import get_burst_id_from_file_name
+from opera.util.dataset_utils import get_sensor_from_spacecraft_name
+from opera.util.dataset_utils import parse_bounding_polygon_from_wkt
 from opera.util.error_codes import ErrorCode
 from opera.util.geo_utils import translate_utm_bbox_to_lat_lon
 from opera.util.h5_utils import get_rtc_s1_product_metadata

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 """
 ==============
 cslc_s1_pge.py
@@ -13,11 +12,13 @@ import glob
 import os.path
 from datetime import datetime
 from os import walk
-from os.path import getsize, join
+from os.path import getsize
+from os.path import join
 from pathlib import Path
 
-from opera.pge.base.base_pge import (PgeExecutor, PostProcessorMixin,
-                                     PreProcessorMixin)
+from opera.pge.base.base_pge import PgeExecutor
+from opera.pge.base.base_pge import PostProcessorMixin
+from opera.pge.base.base_pge import PreProcessorMixin
 from opera.util.dataset_utils import parse_bounding_polygon_from_wkt
 from opera.util.error_codes import ErrorCode
 from opera.util.h5_utils import get_cslc_s1_product_metadata
