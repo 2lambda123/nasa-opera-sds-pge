@@ -14,7 +14,6 @@ import tempfile
 import unittest
 from io import StringIO
 from os.path import abspath, exists, join
-from random import randint
 
 from pkg_resources import resource_filename
 
@@ -29,6 +28,7 @@ from opera.util.logger import default_log_file_name
 from opera.util.logger import get_severity_from_error_code
 from opera.util.logger import standardize_severity_string
 from opera.util.logger import write
+import secrets
 
 
 class LoggerTestCase(unittest.TestCase):
@@ -152,13 +152,13 @@ class LoggerTestCase(unittest.TestCase):
         Only tests one per category
         Selection is made from a random integer within each individual range.
         """
-        info_index = randint(INFO_RANGE_START, DEBUG_RANGE_START - 1)
+        info_index = secrets.SystemRandom().randint(INFO_RANGE_START, DEBUG_RANGE_START - 1)
         self.assertEqual(get_severity_from_error_code(info_index), "Info")
-        debug_index = randint(DEBUG_RANGE_START, WARNING_RANGE_START - 1)
+        debug_index = secrets.SystemRandom().randint(DEBUG_RANGE_START, WARNING_RANGE_START - 1)
         self.assertEqual(get_severity_from_error_code(debug_index), "Debug")
-        warning_index = randint(WARNING_RANGE_START, CRITICAL_RANGE_START - 1)
+        warning_index = secrets.SystemRandom().randint(WARNING_RANGE_START, CRITICAL_RANGE_START - 1)
         self.assertEqual(get_severity_from_error_code(warning_index), "Warning")
-        critical_index = randint(CRITICAL_RANGE_START, CRITICAL_RANGE_START + CODES_PER_RANGE)
+        critical_index = secrets.SystemRandom().randint(CRITICAL_RANGE_START, CRITICAL_RANGE_START + CODES_PER_RANGE)
         self.assertEqual(get_severity_from_error_code(critical_index), "Critical")
 
     def test_standardize_severity_string(self):
