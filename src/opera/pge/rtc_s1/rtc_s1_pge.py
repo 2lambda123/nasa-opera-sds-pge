@@ -36,7 +36,7 @@ class RtcS1PreProcessorMixin(PreProcessorMixin):
     """Mixin class responsible for handling all pre-processing steps for the RTC-S1
     PGE. The pre-processing phase is defined as all steps necessary prior to
     SAS execution.
-    
+
     In addition to the base functionality inherited from PreProcessorMixin, this
     mixin adds an input validation step to ensure that input(s) defined by the
     RunConfig exist and are valid.
@@ -48,14 +48,14 @@ class RtcS1PreProcessorMixin(PreProcessorMixin):
 
     def run_preprocessor(self, **kwargs):
         """Executes the pre-processing steps for RTC-S1 PGE initialization.
-        
+
         The RtcS1PreProcessorMixin version of this class performs all actions of
         the base PreProcessorMixin class, and adds an input validation step for
         the inputs defined within the RunConfig.
 
-        :param **kwargs: 
+        :param **kwargs:
 
-        
+
         """
         super().run_preprocessor(**kwargs)
 
@@ -66,7 +66,7 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
     """Mixin class responsible for handling all post-processing steps for the RTC-S1
     PGE. The post-processing phase is defined as all steps required after SAS
     execution has completed, prior to handover of output products to PCM.
-    
+
     In addition to the base functionality inherited from PostProcessorMixin, this
     mixin adds an output validation step to ensure that the output file(s) defined
     by the RunConfig exist and are valid.
@@ -138,9 +138,9 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
     def _core_filename(self, inter_filename=None):
         """Returns the core file name component for products produced by the
         RTC-S1 PGE.
-        
+
         The core file name component for RTC-S1 products consists of:
-        
+
         <PROJECT>_<LEVEL>_<PGE NAME>-<SOURCE>
 
         :param inter_filename: The intermediate filename of the output product to generate the
@@ -172,11 +172,11 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
     def _core_static_filename(self, inter_filename=None):
         """Returns the core file name component for static layer products produced
         by the RTC-S1 PGE.
-        
+
         The core file name component for RTC-S1 products consists of:
-        
+
         <Core filename>-STATIC
-        
+
         Where <Core filename> is returned by RtcS1PostProcessorMixin._core_filename().
 
         :param inter_filename: The intermediate filename of the output product to generate the
@@ -186,7 +186,7 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
             this parameter may be omitted. (Default value = None)
         :type inter_filename: str, optional
 
-        
+
         """
         core_filename = self._core_filename(inter_filename)
 
@@ -194,15 +194,15 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
 
     def _rtc_filename(self, inter_filename, static_layer_product=False):
         """Returns the base file name to use for RTC products produced by this PGE.
-        
+
         The base filename for the RTC PGE consists of:
-        
+
             <Core filename>_<BURST ID>_<ACQUISITION TIMETAG>[_<PRODUCTION TIMETAG>]_<SENSOR>_<SPACING>_<PRODUCT VERSION>
-        
+
         Where <Core filename> is returned by RtcS1PostProcessorMixin._core_filename()
         if static_layer_product is False, otherwise it is the value returned by
         RtcS1PostProcessorMixin._core_static_filename()
-        
+
         If static_layer_product is True, <ACQUISITION TIMETAG> will correspond
         to the configured data validity start time (as defined in the RunConfig),
         and <PRODUCTION TIMETAG> will be omitted altogether.
@@ -217,7 +217,7 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
         :returns: rtc_filename->     The file name to assign to RTC product(s) created by this PGE.
         :rtype: str
 
-        
+
         """
         if static_layer_product:
             core_filename = self._core_static_filename(inter_filename)
@@ -319,11 +319,11 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
         may be optionally produced by this PGE. There are currently 5 static layer
         products which may be produced by this PGE, each identified by a
         static layer name appended to the end of the intermediate filename.
-        
+
         The filename for static layer RTC products consists of:
-        
+
             <RTC static filename>_<Static layer name>.tif
-        
+
         Where <RTC static filename> is returned by RtcS1PostProcessorMixin._rtc_filename()
         with static_layer_product set to True.
         <Static layer name> is the identifier for the specific static layer
@@ -335,7 +335,7 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
             shadow_mask, etc...) is appended to denote the type.
         :type inter_filename: str
 
-        
+
         """
         filename, ext = os.path.splitext(basename(inter_filename))
 
@@ -360,11 +360,11 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
     def _rtc_geotiff_filename(self, inter_filename):
         """Returns the file name to use for GeoTIFF format RTC products produced
         by this PGE.
-        
+
         The filename for GeoTIFF RTC products consists of:
-        
+
             <RTC filename>_<POLARIZATION>.tif
-        
+
         Where <RTC filename> is returned by RtcS1PostProcessorMixin._rtc_filename(),
         and <POLARIZATION> is the polarization value of the GeoTIFF, as extracted from
         inter_filename.
@@ -374,7 +374,7 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
             in order to derive any necessary components of the returned filename.
         :type inter_filename: str
 
-        
+
         """
         filename, ext = os.path.splitext(basename(inter_filename))
 
@@ -388,11 +388,11 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
 
     def _mask_filename(self, inter_filename):
         """Returns the file name to use for RTC mask products produced by this PGE.
-        
+
         The filename for GeoTIFF RTC products consists of:
-        
+
             <RTC filename>_mask.tif
-        
+
         Where <RTC filename> is returned by RtcS1PostProcessorMixin._rtc_filename().
 
         :param inter_filename: The intermediate filename of the output product to generate
@@ -400,7 +400,7 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
             in order to derive any necessary components of the returned filename.
         :type inter_filename: str
 
-        
+
         """
         rtc_filename = self._rtc_filename(inter_filename)
 
@@ -409,11 +409,11 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
     def _browse_filename(self, inter_filename):
         """Returns the final file name of the PNG browse image product which may
         be optionally produced by this PGE.
-        
+
         The filename for RTC browse product consists of:
-        
+
             <RTC filename>_BROWSE.png
-        
+
         Where <RTC filename> is returned by RtcS1PostProcessorMixin._rtc_filename().
 
         :param inter_filename: The intermediate filename of the output product to generate
@@ -421,7 +421,7 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
             in order to derive any necessary components of the returned filename.
         :type inter_filename: str
 
-        
+
         """
         rtc_filename = self._rtc_filename(inter_filename)
 
@@ -432,11 +432,11 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
     def _static_browse_filename(self, inter_filename):
         """Returns the final file name of the static layer PNG browse image product
         which may be optionally produced by this PGE.
-        
+
         The filename for the RTC static layer browse product consists of:
-        
+
             <RTC static filename>_BROWSE.png
-        
+
         Where <RTC static filename> is returned by RtcS1PostProcessorMixin._rtc_filename()
         with static_layer_product set ot True.
 
@@ -445,7 +445,7 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
             in order to derive any necessary components of the returned filename.
         :type inter_filename: str
 
-        
+
         """
         rtc_filename = self._rtc_filename(inter_filename, static_layer_product=True)
 
@@ -455,11 +455,11 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
 
     def _rtc_metadata_filename(self, inter_filename):
         """Returns the file name to use for RTC metadata products produced by this PGE.
-        
+
         The filename for RTC metadata products consists of:
-        
+
             <RTC filename>.<ext>
-        
+
         Where <RTC filename> is returned by RtcS1PostProcessorMixin._rtc_filename(),
         and <ext> is the file extension carried over from inter_filename (usually
         .h5 or .nc).
@@ -469,7 +469,7 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
             in order to derive any necessary components of the returned filename.
         :type inter_filename: str
 
-        
+
         """
         ext = os.path.splitext(inter_filename)[-1]
 
@@ -479,11 +479,11 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
 
     def _static_metadata_filename(self, inter_filename):
         """Returns the file name to use for RTC metadata products produced by this PGE.
-        
+
         The filename for RTC metadata products consists of:
-        
+
             <RTC static filename>.<ext>
-        
+
         Where <RTC static filename> is returned by RtcS1PostProcessorMixin._rtc_filename()
         with static_layer_product set ot True, and <ext> is the file extension
         carried over from inter_filename (usually .h5 or .nc).
@@ -493,7 +493,7 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
             in order to derive any necessary components of the returned filename.
         :type inter_filename: str
 
-        
+
         """
         ext = os.path.splitext(inter_filename)[-1]
 
@@ -505,17 +505,17 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
         """Helper method to derive the core component of the file names for
         the ancillary products associated to a PGE job (catalog metadata, log
         file, etc...).
-        
+
         The core file name component for RTC-S1 ancillary products consists of:
-        
+
         <PROJECT>_<LEVEL>_<PGE NAME>-<SOURCE>_<PRODUCTION TIME>_<SENSOR>_<SPACING>_<PRODUCT VERSION>
-        
+
         Since these files are not specific to any particular burst processed
         for an RTC job, fields such as burst ID and acquisition time are omitted
         from this file pattern.
 
 
-        
+
         """
         # Metadata fields we need for ancillary file name should be equivalent
         # across all bursts, so just take the first set of cached metadata as
@@ -545,32 +545,32 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
 
     def _catalog_metadata_filename(self):
         """Returns the file name to use for Catalog Metadata produced by the RTC-S1 PGE.
-        
+
         The Catalog Metadata file name for the RTC-S1 PGE consists of:
-        
+
             <Ancillary filename>.catalog.json
-        
+
         Where <Ancillary filename> is returned by RtcS1PostProcessorMixin._ancillary_filename()
 
 
-        
+
         """
         return self._ancillary_filename() + ".catalog.json"
 
     def _iso_metadata_filename(self, burst_id):
         """Returns the file name to use for ISO Metadata produced by the RTC-S1 PGE.
-        
+
         The ISO Metadata file name for the RTC-S1 PGE consists of:
-        
+
             <RTC filename>.iso.xml
-        
+
         Where <RTC filename> is returned by RtcS1PostProcessorMixin._rtc_filename()
 
         :param burst_id: The burst identifier used to look up the corresponding cached RTC
             filename.
         :type burst_id: str
 
-        
+
         """
         if burst_id not in self._burst_filename_cache:
             raise RuntimeError(f"No file name cached for burst ID {burst_id}")
@@ -581,30 +581,30 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
 
     def _log_filename(self):
         """Returns the file name to use for the PGE/SAS log file produced by the RTC-S1 PGE.
-        
+
         The log file name for the RTC-S1 PGE consists of:
-        
+
             <Ancillary filename>.log
-        
+
         Where <Ancillary filename> is returned by RtcS1PostProcessorMixin._ancillary_filename()
 
 
-        
+
         """
         return self._ancillary_filename() + ".log"
 
     def _qa_log_filename(self):
         """Returns the file name to use for the Quality Assurance application log
         file produced by the RTC-S1 PGE.
-        
+
         The log file name for the RTC-S1 PGE consists of:
-        
+
             <Ancillary filename>.qa.log
-        
+
         Where <Ancillary filename> is returned by RtcS1PostProcessorMixin._ancillary_filename()
 
 
-        
+
         """
         return self._ancillary_filename() + ".qa.log"
 
@@ -616,7 +616,7 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
         :param metadata_product: Path the HDF5/NETCDF metadata product to collect metadata from.
         :type metadata_product: str
 
-        
+
         """
         output_product_metadata = get_rtc_s1_product_metadata(metadata_product)
 
@@ -667,13 +667,13 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
 
     def _create_custom_metadata(self):
         """Creates the "custom data" dictionary used with the ISO metadata rendering.
-        
+
         Custom data contains all metadata information needed for the ISO template
         that is not found within any of the other metadata sources (such as the
         RunConfig, output product(s), or catalog metadata).
 
 
-        
+
         """
         custom_metadata = {
             "ISO_OPERA_FilePackageName": self._ancillary_filename(),
@@ -697,7 +697,7 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
     def _create_iso_metadata(self, burst_metadata):
         """Creates a rendered version of the ISO metadata template for RTC-S1
         output products using metadata from the following locations:
-        
+
             * RunConfig (in dictionary form)
             * Output product (dictionary extracted from HDF5 product, per-burst)
             * Catalog metadata
@@ -707,7 +707,7 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
             be included as the "product_output" metadata in the rendered ISO xml.
         :type burst_metadata: dict
 
-        
+
         """
         runconfig_dict = self.runconfig.asdict()
 
@@ -743,7 +743,7 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
         are staged to the output location defined by the RunConfig. This includes
         reassignment of file names to meet the file-naming conventions required
         by the PGE.
-        
+
         This version of the method performs the same steps as the base PGE
         implementation, except that an ISO xml metadata file is rendered for
         each burst product created from the input SLC, since each burst can
@@ -830,15 +830,15 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
 
     def run_postprocessor(self, **kwargs):
         """Executes the post-processing steps for the RTC-S1 PGE.
-        
+
         The RtcS1PostProcessorMixin version of this method performs the same
         steps as the base PostProcessorMixin, but inserts a step to perform
         output product validation prior to staging and renaming of the output
         files.
 
-        :param **kwargs: 
+        :param **kwargs:
 
-        
+
         """
         print(f"Running postprocessor for {self._post_mixin_name}")
 
@@ -849,7 +849,7 @@ class RtcS1PostProcessorMixin(PostProcessorMixin):
 
 class RtcS1Executor(RtcS1PreProcessorMixin, RtcS1PostProcessorMixin, PgeExecutor):
     """Main class for execution of the RTC-S1 PGE, including the SAS layer.
-    
+
     This class essentially rolls up the RTC-specific pre- and post-processor
     functionality, while inheriting all other functionality for setup and execution
     of the SAS from the base PgeExecutor class.

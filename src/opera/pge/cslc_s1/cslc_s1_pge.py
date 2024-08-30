@@ -31,7 +31,7 @@ class CslcS1PreProcessorMixin(PreProcessorMixin):
     """Mixin class responsible for handling all pre-processing steps for the CSLC-S1
     PGE. The pre-processing phase is defined as all steps necessary prior
     to SAS execution.
-    
+
     In addition to the base functionality inherited from PreProcessorMixin, this
     mixin adds an input validation step to ensure that input(s) defined by the
     RunConfig exist and are valid.
@@ -43,14 +43,14 @@ class CslcS1PreProcessorMixin(PreProcessorMixin):
 
     def run_preprocessor(self, **kwargs):
         """Executes the pre-processing steps for CSLC-S1 PGE initialization.
-        
+
         The CslcS1PreProcessorMixin version of this class performs all actions
         of the base PreProcessorMixin class, and adds an input validation step
         for the inputs defined within the RunConfig.
 
-        :param **kwargs: 
+        :param **kwargs:
 
-        
+
         """
         super().run_preprocessor(**kwargs)
 
@@ -61,7 +61,7 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
     """Mixin class responsible for handling all post-processing steps for the CSLC-S1
     PGE. The post-processing phase is defined as all steps required after SAS
     execution has completed, prior to handover of output products to PCM.
-    
+
     In addition to the base functionality inherited from PostProcessorMixin, this
     mixin adds an output validation step to ensure that the output file(s) defined
     by the RunConfig exist and are valid.
@@ -124,11 +124,11 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
     def _core_filename(self, inter_filename=None):
         """Returns the core file name component for products produced by the
         CSLC-S1 PGE.
-        
+
         The core file name component of the CSLC-S1 PGE consists of:
-        
+
         <PROJECT>_<LEVEL>_<PGE NAME>
-        
+
         Callers of this function are responsible for assignment of any other
         product-specific fields, such as the file extension.
 
@@ -159,12 +159,12 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
     def _core_static_filename(self, inter_filename=None):
         """Returns the core file name component for static layer products produced
         by the CSLC-S1 PGE.
-        
+
         The core file name component of the CSLC-S1 PGE static layer products
         consists of:
-        
+
         <Core filename>-STATIC
-        
+
         Where <Core filename> is returned by CslcS1PostProcessorMixin._core_filename()
 
         :param inter_filename: The intermediate filename of the output product to generate the
@@ -174,7 +174,7 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
             this parameter may be omitted. (Default value = None)
         :type inter_filename: str, optional
 
-        
+
         """
         core_filename = self._core_filename(inter_filename)
 
@@ -182,19 +182,19 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
 
     def _cslc_filename(self, inter_filename, static_layer_product=False):
         """Returns the file name to use for burst-based CSLC products produced by this PGE.
-        
+
         The filename for the CSLC-S1 burst products consists of:
-        
+
             <Core filename>_<BURST ID>_<ACQUISITION TIMETAG>[_<PRODUCTION TIMETAG>]_<SENSOR>_<POL>_<PRODUCT_VERSION>
-        
+
         Where <Core filename> is returned by CslcS1PostProcessorMixin._core_filename()
         if static_layer_product is False, otherwise it is the value returned by
         CslcS1PostProcessorMixin._core_static_filename()
-        
+
         If static_layer_product is True, <ACQUISITION TIMETAG> will correspond
         to the configured data validity start time (as defined in the RunConfig),
         and <PRODUCTION TIMETAG> will be omitted altogether.
-        
+
         Also note that this does not include a file extension, which should be
         added to the return value of this method by any callers to distinguish
         different file formats that are produced for each burst in an input SLC.
@@ -209,7 +209,7 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
         :returns: cslc_filename->     The file name to assign to CSLC product(s) created by this PGE.
         :rtype: str
 
-        
+
         """
         if static_layer_product:
             core_filename = self._core_static_filename(inter_filename)
@@ -301,11 +301,11 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
 
     def _h5_filename(self, inter_filename):
         """Returns the file name to use for HDF5 products produced by the CSLC-S1 PGE.
-        
+
         The HDF5 filename for the CSLC-S1 PGE consists of:
-        
+
             <CSLC filename>.h5
-        
+
         Where <CSLC filename> is returned by CslcS1PostProcessorMixin._cslc_filename()
 
         :param inter_filename: The intermediate filename of the output HDF5 to generate a
@@ -313,7 +313,7 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
             to derive any necessary components of the returned filename.
         :type inter_filename: str
 
-        
+
         """
         cslc_filename = self._cslc_filename(inter_filename)
 
@@ -322,11 +322,11 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
     def _static_layers_filename(self, inter_filename):
         """Returns the file name to use for the static layers product produced by
         the CSLC-S1 PGE.
-        
+
         The static layers filename for the CSLC-S1 PGE consists of:
-        
+
             <CSLC static filename>.h5
-        
+
         Where <CSLC static filename> is returned by CslcS1PostProcessorMixin._cslc_filename()
         with static_layer_product set to True.
 
@@ -335,7 +335,7 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
             core CSLC file name component for static layer products.
         :type inter_filename: str
 
-        
+
         """
         cslc_filename = self._cslc_filename(inter_filename, static_layer_product=True)
 
@@ -346,11 +346,11 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
     def _browse_filename(self, inter_filename):
         """Returns the file name to use for the PNG browse image produced by
         the CSLC-S1 PGE.
-        
+
         The browse image filename for the CSLC-S1 PGE consists of:
-        
+
             <CSLC filename>_BROWSE.png
-        
+
         Where <CSLC filename> is returned by CslcS1PostProcessorMixin._cslc_filename()
 
         :param inter_filename: The intermediate filename of the output browse image to generate a
@@ -358,7 +358,7 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
             to derive any necessary components of the returned filename.
         :type inter_filename: str
 
-        
+
         """
         cslc_filename = self._cslc_filename(inter_filename)
 
@@ -366,11 +366,11 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
 
     def _geotiff_filename(self, inter_filename):
         """Returns the file name to use for GeoTIFF's produced by the CSLC-S1 PGE.
-        
+
         The GeoTIFF filename for the CSLC-S1 PGE consists of:
-        
+
             <CSLC filename>.tif
-        
+
         Where <CSLC filename> is returned by CslcS1PostProcessorMixin._cslc_filename()
 
         :param inter_filename: The intermediate filename of the output GeoTIFF to generate a
@@ -378,7 +378,7 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
             to derive any necessary components of the returned filename.
         :type inter_filename: str
 
-        
+
         """
         cslc_filename = self._cslc_filename(inter_filename)
 
@@ -387,11 +387,11 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
     def _json_metadata_filename(self, inter_filename):
         """Returns the file name to use for JSON metadata files produced by the
         CSLC-S1 PGE.
-        
+
         The JSON metadata filename for the CSLC-S1 PGE consists of:
-        
+
             <CSLC filename>.json
-        
+
         Where <CSLC filename> is returned by CslcS1PostProcessorMixin._cslc_filename()
 
         :param inter_filename: The intermediate filename of the output JSON metadata to generate a
@@ -399,7 +399,7 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
             to derive any necessary components of the returned filename.
         :type inter_filename: str
 
-        
+
         """
         cslc_filename = self._cslc_filename(inter_filename)
 
@@ -409,21 +409,21 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
         """Helper method to derive the core component of the file names for the
         ancillary products associated to a PGE job (catalog metadata, log file,
         etc...).
-        
+
         The core file name component for CSLC-S1 ancillary products consists of:
-        
+
         <PROJECT>_<LEVEL>_<PGE NAME>_<PRODUCTION TIMETAG>_<SENSOR>_<POL>_<PRODUCT VER>
-        
+
         Since these files are not specific to any particular burst processed for
         a CSLC job, fields such as burst ID and acquisition time are omitted from
         this file pattern.
-        
+
         Also note that this does not include a file extension, which should be
         added to the return value of this method by any callers to distinguish
         the different formats of ancillary outputs produced by this PGE.
 
 
-        
+
         """
         # Metadata fields we need for ancillary file name should be equivalent
         # across all bursts, so just take the first set of cached metadata as
@@ -451,25 +451,25 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
 
     def _catalog_metadata_filename(self):
         """Returns the file name to use for Catalog Metadata produced by the CSLC-S1 PGE.
-        
+
         The Catalog Metadata file name for the CSLC-S1 PGE consists of:
-        
+
             <Ancillary filename>.catalog.json
-        
+
         Where <Ancillary filename> is returned by CslcPostProcessorMixin._ancillary_filename()
 
 
-        
+
         """
         return self._ancillary_filename() + ".catalog.json"
 
     def _iso_metadata_filename(self, burst_id):
         """Returns the file name to use for ISO Metadata produced by the CSLC-S1 PGE.
-        
+
         The ISO Metadata file name for the CSLC-S1 PGE consists of:
-        
+
             <CSLC filename>.iso.xml
-        
+
         Where <CSLC filename> is returned by CslcS1PostProcessorMixin._cslc_filename()
 
         :param burst_id: The burst identifier used to look up the corresponding cached
@@ -478,7 +478,7 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
         :returns: iso_metadata_filename->     The file name to assign to the ISO Metadata product created by this PGE.
         :rtype: str
 
-        
+
         """
         if burst_id not in self._burst_filename_cache:
             raise RuntimeError(f"No file name cached for burst ID {burst_id}")
@@ -489,30 +489,30 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
 
     def _log_filename(self):
         """Returns the file name to use for the PGE/SAS log file produced by the CSLC-S1 PGE.
-        
+
         The log file name for the CSLC-S1 PGE consists of:
-        
+
             <Ancillary filename>.log
-        
+
         Where <Ancillary filename> is returned by CslcS1PostProcessorMixin._ancillary_filename()
 
 
-        
+
         """
         return self._ancillary_filename() + ".log"
 
     def _qa_log_filename(self):
         """Returns the file name to use for the Quality Assurance application log
         file produced by the CSLC-S1 PGE.
-        
+
         The log file name for the CSLC-S1 PGE consists of:
-        
+
             <Ancillary filename>.qa.log
-        
+
         Where <Ancillary filename> is returned by CslcS1PostProcessorMixin._ancillary_filename()
 
 
-        
+
         """
         return self._ancillary_filename() + ".qa.log"
 
@@ -524,7 +524,7 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
         :param metadata_product: Path the HDF5/NETCDF metadata product to collect metadata from.
         :type metadata_product: str
 
-        
+
         """
         output_product_metadata = get_cslc_s1_product_metadata(metadata_product)
 
@@ -591,13 +591,13 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
 
     def _create_custom_metadata(self):
         """Creates the "custom data" dictionary used with the ISO metadata rendering.
-        
+
         Custom data contains all metadata information needed for the ISO template
         that is not found within any of the other metadata sources (such as the
         RunConfig, output product(s), or catalog metadata).
 
 
-        
+
         """
         custom_metadata = {
             "ISO_OPERA_FilePackageName": self._core_filename(),
@@ -622,7 +622,7 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
     def _create_iso_metadata(self, burst_metadata):
         """Creates a rendered version of the ISO metadata template for CSLC-S1
         output products using metadata from the following locations:
-        
+
             * RunConfig (in dictionary form)
             * Output product (dictionary extracted from HDF5 product, per-burst)
             * Catalog metadata
@@ -632,7 +632,7 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
             be included as the "product_output" metadata in the rendered ISO xml.
         :type burst_metadata: dict
 
-        
+
         """
         runconfig_dict = self.runconfig.asdict()
 
@@ -668,7 +668,7 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
         are staged to the output location defined by the RunConfig. This includes
         reassignment of file names to meet the file-naming conventions required
         by the PGE.
-        
+
         This version of the method performs the same steps as the base PGE
         implementation, except that an ISO xml metadata file is rendered for
         each burst product created from the input SLC, since each burst can
@@ -755,15 +755,15 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
 
     def run_postprocessor(self, **kwargs):
         """Executes the post-processing steps for the CSLC-S1 PGE.
-        
+
         The CslcS1PostProcessorMixin version of this method performs the same
         steps as the base PostProcessorMixin, but inserts a step to perform
         output product validation prior to staging and renaming of the output
         files.
 
-        :param **kwargs: 
+        :param **kwargs:
 
-        
+
         """
         print(f"Running postprocessor for {self._post_mixin_name}")
 
@@ -774,7 +774,7 @@ class CslcS1PostProcessorMixin(PostProcessorMixin):
 
 class CslcS1Executor(CslcS1PreProcessorMixin, CslcS1PostProcessorMixin, PgeExecutor):
     """Main class for execution of the CSLC-S1 PGE, including the SAS layer.
-    
+
     This class essentially rolls up the CSLC-specific pre- and post-processor
     functionality, while inheriting all other functionality for setup and execution
     of the SAS from the base PgeExecutor class.
